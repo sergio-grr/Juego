@@ -6,11 +6,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     :root {
-      --color-primary: #7FFFD4; /* Azul aguamarina */
-      --color-secondary: #66CDAA; /* Tonos complementarios de aguamarina */
+      --color-primary: #7FFFD4;
+      --color-secondary: #66CDAA;
       --color-accent: #FFA502;
     }
-    
+
     body {
       margin: 0;
       background: #000;
@@ -20,8 +20,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
     }
-    
+
     .scoreboard {
       display: flex;
       justify-content: space-between;
@@ -30,20 +31,20 @@
       padding: 20px;
       font-size: 1.2em;
     }
-    
+
     .game-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 20px;
+      gap: 10px;
       padding: 20px;
-      max-width: 900px;
-      position: relative; /* Para manejar posicionamiento absoluto de las cajas */
+      max-width: 100%;
+      position: relative;
     }
-    
+
     .gift-box {
-      width: 200px;
-      height: 200px;
+      width: 150px;
+      height: 150px;
       background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
       border-radius: 10px;
       cursor: pointer;
@@ -53,89 +54,71 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      z-index: 1; /* Asegura que las cajas estén por encima durante animaciones */
+      z-index: 1;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     }
-    
+
     .gift-box::before {
       content: '🎁';
-      font-size: 5em;
+      font-size: 3em;
       position: absolute;
-      z-index: 2; /* Ícono por encima del contenido */
+      z-index: 2;
       transition: opacity 0.3s ease;
       opacity: 1;
     }
-    
+
     .gift-box:hover {
       transform: scale(1.05);
       box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5);
     }
-    
+
     .gift-box img {
       width: 80%;
       height: 80%;
       object-fit: contain;
       display: none;
-      z-index: 3; /* Imagen por encima de todo */
+      z-index: 3;
     }
-    
+
     .gift-box.revealed::before {
       opacity: 0;
     }
-    
+
     .gift-box.revealed img {
       display: block;
       animation: bounce 0.5s ease;
     }
-    
+
     @keyframes bounce {
       0% { transform: scale(0); }
       50% { transform: scale(1.2); }
       100% { transform: scale(1); }
     }
-    
+
     .modal {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0, 0, 0, 0.8);
       display: none;
       justify-content: center;
       align-items: center;
-      z-index: 10; /* Modal por encima de todo */
+      z-index: 10;
     }
-    
+
     .ticket {
       background: linear-gradient(135deg, #FFD700, #DAA520);
-      padding: 30px;
-      border-radius: 15px;
+      padding: 20px;
+      border-radius: 10px;
       text-align: center;
       color: #2f3542;
-      max-width: 80%;
+      max-width: 90%;
       position: relative;
       box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
     }
-    
-    .ticket::before,
-    .ticket::after {
-      content: '✂';
-      position: absolute;
-      font-size: 2em;
-      color: var(--color-primary);
-    }
-    
-    .ticket::before {
-      top: 10px;
-      left: 10px;
-    }
-    
-    .ticket::after {
-      bottom: 10px;
-      right: 10px;
-    }
-    
+
     .ticket button {
       margin-top: 20px;
       padding: 10px 20px;
@@ -147,19 +130,23 @@
       font-size: 0.8em;
       transition: background-color 0.3s ease;
     }
-    
+
     .ticket button:hover {
       background-color: var(--color-secondary);
     }
-    
+
     @media (max-width: 768px) {
-      .game-container {
-        gap: 10px;
-      }
-      
       .gift-box {
-        width: 150px;
-        height: 150px;
+        width: 100px;
+        height: 100px;
+      }
+
+      .game-container {
+        gap: 5px;
+      }
+
+      .ticket {
+        padding: 15px;
       }
     }
   </style>
@@ -169,13 +156,13 @@
     <div>Puntos: <span id="score">0</span></div>
     <div>Intentos: <span id="attempts">0</span></div>
   </div>
-  
+
   <div class="game-container" id="gameContainer">
     <div class="gift-box" data-box="1"></div>
     <div class="gift-box" data-box="2"></div>
     <div class="gift-box" data-box="3"></div>
   </div>
-  
+
   <div class="modal" id="winModal">
     <div class="ticket">
       <h2>>Tu regalo es un vale por</h2>
@@ -183,7 +170,7 @@
       <button onclick="resetGame()">Jugar de nuevo</button>
     </div>
   </div>
-  
+
   <script>
     const gameState = {
       score: 0,
@@ -191,43 +178,33 @@
       winningBox: 1,
       canPlay: true
     };
-    
+
     const dinoImages = [
       'assets/E96EA6F7-15A8-49A6-91E5-CE7739E05C6A-removebg-preview.png',
       'assets/79154E8C-983E-455F-B653-DA4AD3945BA5-removebg-preview.png',
       'assets/8C5FD2CC-E977-48F4-BE15-DEE38E4A14B4-removebg-preview.png'
     ];
-    
+
     function updateScore() {
       document.getElementById('score').textContent = gameState.score;
       document.getElementById('attempts').textContent = gameState.attempts;
     }
-    
+
     function shuffleBoxes() {
       const boxes = Array.from(document.querySelectorAll('.gift-box'));
-      const container = document.getElementById('gameContainer');
-      const boxCount = boxes.length;
-      
-      // Shuffle the boxes array
-      for (let i = boxCount - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [boxes[i].style.order, boxes[j].style.order] = [boxes[j].style.order, boxes[i].style.order];
-      }
-      
-      // Reset order properties
-      boxes.forEach((box, index) => {
-        box.style.order = index;
+      boxes.forEach(box => {
+        box.style.order = Math.floor(Math.random() * 10);
       });
     }
-    
+
     function revealBox(box) {
       if (!gameState.canPlay || box.classList.contains('revealed')) return;
-      
+
       const boxNumber = parseInt(box.dataset.box);
       const isWinner = boxNumber === gameState.winningBox;
-      
+
       box.classList.add('revealed');
-      
+
       if (isWinner) {
         const randomDino = dinoImages[Math.floor(Math.random() * dinoImages.length)];
         box.innerHTML = `<img src="${randomDino}" alt="Dino">`;
@@ -236,9 +213,9 @@
         box.innerHTML = `<div style="font-size: 3em">❌</div>`;
         gameState.attempts++;
       }
-      
+
       updateScore();
-      
+
       setTimeout(() => {
         if (gameState.score >= 10) {
           document.getElementById('winModal').style.display = 'flex';
@@ -247,7 +224,7 @@
         }
       }, 1000);
     }
-    
+
     function resetRound() {
       gameState.canPlay = false;
       const boxes = document.querySelectorAll('.gift-box');
@@ -255,15 +232,15 @@
         box.classList.remove('revealed');
         box.innerHTML = '';
       });
-      
+
       gameState.winningBox = Math.floor(Math.random() * 3) + 1;
       shuffleBoxes();
-      
+
       setTimeout(() => {
         gameState.canPlay = true;
       }, 600);
     }
-    
+
     function resetGame() {
       gameState.score = 0;
       gameState.attempts = 0;
@@ -271,12 +248,11 @@
       updateScore();
       resetRound();
     }
-    
-    // Inicializar juego
+
     document.querySelectorAll('.gift-box').forEach(box => {
       box.addEventListener('click', () => revealBox(box));
     });
-    
+
     window.addEventListener('load', () => {
       resetRound();
     });
